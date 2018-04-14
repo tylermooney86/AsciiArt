@@ -3,11 +3,20 @@
 
 from PIL import Image
 
+# load image using name
+def load_image(img_name):
+    img_dir = 'Images/'
+    image = Image.open(img_dir + img_name)
+    return image
+
+#strip extension from image name
+def strip_extension(img_name):
+    img_split = img_name.split('.')
+    return img_split[0]
+
 # convert images to monochrome
-def monochrome(img_name, extension):
-    photo = Image.open('Images/'+img_name+extension)
-    photo = photo.convert('1')
-    return photo
+def monochrome(image):
+    return image.convert('1')
 
 #read pixel value from image
 def read_pixels(img, x, y):
@@ -15,8 +24,9 @@ def read_pixels(img, x, y):
     return pixel[x,y]
 
 #generate ascii image
-def create_ascii(img, img_name):
-    # get image size
+def create_ascii(img_name):
+    #load image get image size
+    img = monochrome(load_image(img_name))
     width, height = img.size
 
     # starting coordinates on image
@@ -27,7 +37,7 @@ def create_ascii(img, img_name):
     chars = {0: '$', 255: ' '}
 
     # open file to write ascii art to
-    text_file = open('Images/' + img_name + '.txt', 'w')
+    text_file = open('AsciiArt/' + strip_extension(img_name) + '.txt', 'w')
 
     # convert each pixel to ascii char and write to file
     while y <= height - 1:
@@ -46,7 +56,4 @@ def create_ascii(img, img_name):
 
 #prompt user for file name and extension
 image_name = input('please enter name of image:')
-extension = input('enter extension (.jpg):')
-
-image = monochrome(image_name, extension)
-create_ascii(image, image_name)
+create_ascii(image_name)
