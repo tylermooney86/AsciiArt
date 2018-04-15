@@ -1,17 +1,23 @@
 #
 # Ascii art generator
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 from os import listdir
 import sys
 import string
 import collections
 
 # set default image dimensions
-image_dimensions = None
+image_dimensions = (80,40)
 font = ImageFont.load_default()
 image_dir = 'Images/'
 output_dir = 'AsciiArt/'
+selected_image = None
+
+#TODO use selected_image to allow the user to select an image and generate separately
+#so they can tweak settings and generate without selecting every time
+
+#TODO use ImageEnhance to create contrast/brightness settings for more control
 
 
 # check density of char for sorting
@@ -22,8 +28,8 @@ def char_density(c, font=font):
     return collections.Counter(image.getdata())[0] #0 is black
 
 # Default character lists
-mono_chars = list(sorted(' $', key=char_density, reverse=True))
-grayscale_chars = list(sorted( string.punctuation + '$#*%^~@&+=| ', key=char_density, reverse=True))
+mono_chars = ' $'
+grayscale_chars = list(sorted(string.ascii_letters + string.digits + string.punctuation + ' ', key=char_density, reverse=True))
 
 # load image using name
 def load_image(img_name):
@@ -146,6 +152,7 @@ def generate_ascii():
         print('='*20)
         for key, value in images.items():
             print('{} : {}'.format(key,value))
+        print('='*20)
 
         # get user selection
         user_selection = int(input('Enter image number:'))
@@ -172,6 +179,7 @@ def generate_grayscale_ascii():
         print('='*20)
         for key, value in images.items():
             print('{} : {}'.format(key,value))
+        print('='*20)
 
         # get user selection
         user_selection = int(input('Enter image number:'))
@@ -192,7 +200,7 @@ def resize_menu():
 
     if(image_dimensions):
         print('Current image dimensions: ({},{})'.format(image_dimensions[0],image_dimensions[1]))
-
+    print('='*20)
     dimensions = input('Input new dimensions separated by a comma, ex: x,y : ')
     dimensions = dimensions.split(',')
 
@@ -215,6 +223,7 @@ def art_menu():
     print('2 : Grayscale')
     print('9 : Back')
     print('0 : Exit')
+    print('='*20)
     choice = input('Enter Selection: ')
     if choice == '1':
         generate_ascii()
@@ -243,6 +252,7 @@ def view_menu():
         print('='*20)
         for key, value in images.items():
             print('{} : {}'.format(key,value))
+        print('='*20)
 
         # get user selection
         user_selection = int(input('Enter image number:'))
@@ -259,6 +269,7 @@ def char_menu():
     print('1 : Change Monochrome List')
     print('2 : Change Grayscale List')
     print('9 : Back')
+    print('='*20)
     choice = input('Enter Selection: ')
     # Monochrome
     if choice == '1':
@@ -279,7 +290,7 @@ def char_menu():
         print('Current Grayscale List:')
         print(''.join(grayscale_chars))
         new_list = input('Enter New List:')
-        if len(new_list) > 2:
+        if len(new_list) >= 2:
             update_char_list(new_list,'Grayscale')
             print('Updated list:')
             print(''.join(grayscale_chars))
@@ -303,18 +314,19 @@ def main_menu():
 
     print('1 : Generate Ascii Art From Image')
     print('2 : Set Output Dimensions')
-    print('3 : View Generated Text Files')
-    print('4 : Change Character Lists')
+    print('3 : Change Character Lists')
+    print('4 : View Generated Text Files')
     print('0 : Exit')
+    print('='*23)
     choice = input('Enter Selection: ')
     if choice == '1':
         art_menu()
     elif choice == '2':
         resize_menu()
     elif choice == '3':
-        view_menu()
-    elif choice == '4':
         char_menu()
+    elif choice == '4':
+        view_menu()
     elif choice == '0':
         exit()
     else:
