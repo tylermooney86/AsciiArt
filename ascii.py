@@ -15,6 +15,8 @@ font = ImageFont.load_default()
 image_dir = 'Images/'
 output_dir = 'AsciiArt/'
 selected_image = None
+contrast = None
+brightness = None
 
 #TODO use ImageEnhance to create contrast/brightness settings for more control
 
@@ -38,8 +40,14 @@ grayscale_chars = list(sorted(string.ascii_letters + string.digits + string.punc
 # load image using name
 def load_image(img_name):
     image = Image.open(image_dir + img_name)
-    if(image_dimensions):
+
+    if image_dimensions is not None:
         image = image.resize(image_dimensions, Image.ANTIALIAS)
+    if contrast is not None:
+        image = ImageEnhance.Contrast(image).enhance(contrast)
+    if brightness is not None:
+        image = ImageEnhance.Brightness(image).enhance(brightness)
+
     return image
 
 #strip extension from image name
@@ -90,6 +98,28 @@ def print_results(filename):
     output = text_file.read()
     print(output)
     text_file.close()
+
+# set brightness
+def set_brightness(b):
+    global brightness
+    brightness = b
+
+# set contrast
+def set_contrast(c):
+    global contrast
+    contrast = c
+
+# reverse order of character list
+def invert_character_list(ch = 'Grayscale'):
+    global mono_chars, grayscale_chars
+    if ch == 'Monochrome':
+        mono_chars = mono_chars[::-1]
+    else:
+        grayscale_chars = grayscale_chars[::-1]
+
+#exit program
+def exit():
+    sys.exit()
 
 '''
 # #############
@@ -177,9 +207,9 @@ def generate_ascii(image_filter='Grayscale'):
 '''
 def select_image_menu():
     global selected_image
-    print('='*20)
-    print('#'*3 + ' Select Image ' + '#'*3)
-    print('='*20)
+    print('='*32)
+    print('#' + ' '*8 + ' Select Image ' + ' '*8 + '#')
+    print('='*32)
     # create list of images in image directory
     images = generate_image_list(image_dir)
 
@@ -187,29 +217,31 @@ def select_image_menu():
     if(len(images) == 0):
         print('Please add images to Images directory before running program.')
     else:
-        # print list of images for user selection
-        print('='*20)
-        print('#'*6 + ' Images ' + '#'*6)
-        print('='*20)
         for key, value in images.items():
             print('{} : {}'.format(key,value))
-        print('='*20)
+        print('='*32)
 
         # get user selection
-        user_selection = int(input('Enter image number:'))
-        selected_image = images[user_selection]
-        print('Current Selected Image : ' + selected_image)
+        user_selection = int(input('Enter Selection: '))
+        if user_selection == 0:
+            exit()
+        elif user_selection < 1 or user_selection > len(images):
+            print('Invalid Selection')
+            select_image_menu()
+        else:
+            selected_image = images[user_selection]
+            print('Current Selected Image: ' + selected_image)
         main_menu()
 
 # resize menu
 def resize_menu():
-    print('='*20)
-    print('#'*6 + ' Resize ' + '#'*6)
-    print('='*20)
+    print('='*32)
+    print('#' + ' '*11 + ' Resize ' + ' '*11 + '#')
+    print('='*32)
 
     if(image_dimensions):
         print('Current image dimensions: ({},{})'.format(image_dimensions[0],image_dimensions[1]))
-    print('='*20)
+    print('='*32)
     dimensions = input('Input new dimensions separated by a comma, ex: x,y : ')
     dimensions = dimensions.split(',')
 
@@ -224,14 +256,14 @@ def resize_menu():
 
 # art style menu
 def art_menu():
-    print('='*20)
-    print('#'*4 + ' Processing ' + '#'*4)
-    print('='*20)
+    print('='*32)
+    print('#' + ' '*9 + ' Processing ' + ' '*9 + '#')
+    print('='*32)
     print('Select Image Processing: ')
     print('1 : Monochrome')
     print('2 : Grayscale')
     print('9 : Back')
-    print('='*20)
+    print('='*32)
     choice = input('Enter Selection: ')
     if choice == '1':
         generate_ascii('Monochrome')
@@ -255,12 +287,12 @@ def view_menu():
         print('Please add images to Images directory before running program.')
     else:
         # print list of images for user selection
-        print('='*20)
-        print('#' + ' Generated Images ' + '#')
-        print('='*20)
+        print('='*32)
+        print('#' + ' '*7 + 'Generated Images' + ' '*7 + '#')
+        print('='*32)
         for key, value in images.items():
             print('{} : {}'.format(key,value))
-        print('='*20)
+        print('='*32)
 
         # get user selection
         user_selection = int(input('Enter image number:'))
@@ -270,20 +302,24 @@ def view_menu():
 
 # Character list menu
 def char_menu():
-    print('='*20)
-    print('#' + ' Character Lists  ' + '#')
-    print('='*20)
+    print('='*32)
+    print('#' + ' '*7 + 'Character Lists ' + ' '*7 + '#')
+    print('='*32)
 
     print('1 : Change Monochrome List')
     print('2 : Change Grayscale List')
+    print('3 : Invert Character List')
     print('9 : Back')
-    print('='*20)
+    print('='*32)
     choice = input('Enter Selection: ')
     # Monochrome
     if choice == '1':
+        print('='*32)
         print('Current Monochrome List:')
         print(''.join(mono_chars))
+        print('='*32)
         new_list = input('Enter New List:')
+        print('='*32)
         if len(new_list) == 2:
             update_char_list(new_list,'Monochrome')
             print('Updated list:')
@@ -295,9 +331,12 @@ def char_menu():
             char_menu()
     # Grayscale
     elif choice == '2':
+        print('='*32)
         print('Current Grayscale List:')
         print(''.join(grayscale_chars))
+        print('='*32)
         new_list = input('Enter New List:')
+        print('='*32)
         if len(new_list) >= 2:
             update_char_list(new_list,'Grayscale')
             print('Updated list:')
@@ -307,31 +346,113 @@ def char_menu():
             print('Invalid Entry')
             print('Grayscale list takes at least two characters')
             char_menu()
+    elif choice == '3':
+        print('='*32)
+        print('1 : Invert Monochrome List')
+        print('2 : Invert Grayscale List')
+        print('9 : Back')
+        print('='*32)
+        invert_choice = input('Enter Selection: ')
+        print('='*32)
+        if invert_choice == '1':
+            invert_character_list('Monochrome')
+            print('Updated list:')
+            print(''.join(mono_chars))
+            main_menu()
+        elif invert_choice == '2':
+            invert_character_list()
+            print('Updated list:')
+            print(''.join(grayscale_chars))
+            main_menu()
+        elif invert_choice == '9':
+            settings_menu()
+        else:
+            print('Invalid Selection')
+            char_menu()
     # Back
     else:
         main_menu()
 
+# brightness Menu
+def brightness_menu():
+    print('='*32)
+    print('#' + ' '*9 + ' Brightness ' + ' '*9 + '#')
+    print('='*32)
 
+    print('Current Brightness: {}'.format(brightness))
+    choice = input('Enter Value: ')
+    if choice.isdigit():
+        set_brightness(float(choice))
+        print('New Brightness: {}'.format(brightness))
+    else:
+        print('Invalid Entry')
+        set_brightness(None)
+    main_menu()
+
+def contrast_menu():
+    print('='*32)
+    print('#' + ' '*10 + ' Contrast ' + ' '*10 + '#')
+    print('='*32)
+
+    print('Current Contrast: {}'.format(contrast))
+    choice = input('Enter Value: ')
+    if choice.isdigit():
+        set_contrast(float(choice))
+        print('New Contrast: {}'.format(contrast))
+    else:
+        print('Invalid Entry')
+        set_contrast(None)
+    main_menu()
+
+# settings menu
+def settings_menu():
+    print('='*32)
+    print('#' + ' '*10 + ' Settings ' + ' '*10 + '#')
+    print('='*32)
+
+    print('1 : Change Character List')
+    print('2 : Set Output Dimensions')
+    print('3 : Change Brightness')
+    print('4 : Change Contrast')
+    print('9 : Back')
+    print('='*32)
+
+    choice = input('Enter Selection: ')
+    if choice == '1':
+        char_menu()
+    elif choice == '2':
+        resize_menu()
+    elif choice == '3':
+        brightness_menu()
+    elif choice == '4':
+        contrast_menu()
+    elif choice == '9':
+        main_menu()
+    elif choice == '0':
+        exit()
+    else:
+        print('Please enter selection from menu options')
+        main_menu()
+'''
 # ###########
 #  Main Menu
 # ###########
-
+'''
 def main_menu():
-    print('='*23)
-    print('#'*23)
-    print('#' + ' '*21 + '#')
-    print('#' + ' ' + 'Ascii Art Generator' + ' ' + '#')
-    print('#' + ' '*21 + '#')
-    print('#'*23)
-    print('='*23)
+    print('='*32)
+    print('#'*32)
+    print('#' + ' '*30 + '#')
+    print('#' + ' '*5 + 'Ascii Art Generator ' + ' '*5 + '#')
+    print('#' + ' '*30 + '#')
+    print('#'*32)
+    print('='*32)
 
     print('1 : Select Image')
     print('2 : Generate Ascii Art')
-    print('3 : Set Output Dimensions')
-    print('4 : Change Character Lists')
-    print('5 : View Generated Text Files')
+    print('3 : Settings')
+    print('4 : View Generated Text File')
     print('0 : Exit')
-    print('='*23)
+    print('='*32)
 
     choice = input('Enter Selection: ')
     if choice == '1':
@@ -339,21 +460,14 @@ def main_menu():
     elif choice == '2':
         art_menu()
     elif choice == '3':
-        resize_menu()
+        settings_menu()
     elif choice == '4':
-        char_menu()
-    elif choice == '5':
         view_menu()
     elif choice == '0':
         exit()
     else:
         print('Please enter selection from menu options')
         main_menu()
-
-#exit program
-def exit():
-    sys.exit()
-
 
 ##### Main #####
 if __name__ == '__main__':
