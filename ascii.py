@@ -7,18 +7,22 @@ import sys
 import string
 import collections
 
-# set default image dimensions
+# ################
+# Global Variables
+# ################
 image_dimensions = (80,40)
 font = ImageFont.load_default()
 image_dir = 'Images/'
 output_dir = 'AsciiArt/'
 selected_image = None
 
-#TODO use selected_image to allow the user to select an image and generate separately
-#so they can tweak settings and generate without selecting every time
-
 #TODO use ImageEnhance to create contrast/brightness settings for more control
 
+'''
+# ############
+#  Functions
+# ############
+'''
 
 # check density of char for sorting
 def char_density(c, font=font):
@@ -28,7 +32,7 @@ def char_density(c, font=font):
     return collections.Counter(image.getdata())[0] #0 is black
 
 # Default character lists
-mono_chars = ' $'
+mono_chars = '$ '
 grayscale_chars = list(sorted(string.ascii_letters + string.digits + string.punctuation + ' ', key=char_density, reverse=True))
 
 # load image using name
@@ -75,10 +79,23 @@ def update_char_list(new_list, list_name):
     global mono_chars, grayscale_chars
     # for the monochrome list
     if list_name == 'Monochrome':
-        mono_chars = list(sorted(new_list, key=char_density, reverse=True))
+        mono_chars = list(new_list)
     else:
         grayscale_chars = list(sorted(new_list, key=char_density, reverse=True))
 
+#print ascii art to terminal
+def print_results(filename):
+    filename = strip_extension(filename)
+    text_file = open(output_dir + filename + '.txt', 'r')
+    output = text_file.read()
+    print(output)
+    text_file.close()
+
+'''
+# #############
+#     ascii
+# #############
+'''
 #generate ascii image
 def create_ascii(img_name):
     #load image get image size
@@ -138,34 +155,31 @@ def create_grayscale_ascii(img_name):
     text_file.close()
 
 # generate menu and get user input
-def generate_ascii():
-    # create list of images in image directory
-    images = generate_image_list(image_dir)
-
-    #Check if images is empty
-    if(len(images) == 0):
-        print('Please add images to Images directory before running program.')
+def generate_ascii(image_filter='Grayscale'):
+    if selected_image == None:
+        select_image_menu()
     else:
-        # print list of images for user selection
-        print('='*20)
-        print('#'*6 + ' Images ' + '#'*6)
-        print('='*20)
-        for key, value in images.items():
-            print('{} : {}'.format(key,value))
-        print('='*20)
-
-        # get user selection
-        user_selection = int(input('Enter image number:'))
-
         # generate ascii art of user selected image
-        print("Generating ascii art from {}.....".format(images[user_selection]))
-        create_ascii(images[user_selection])
+        print("Generating ascii art from {}.....".format(selected_image))
+        if(image_filter == 'Monochrome'):
+            create_ascii(selected_image)
+        else:
+            create_grayscale_ascii(selected_image)
         if(image_dimensions):
             #print results to terminal
-            print_results(images[user_selection])
+            print_results(selected_image)
         main_menu()
 
-def generate_grayscale_ascii():
+'''
+# ##############
+#     Menus
+# ##############
+'''
+def select_image_menu():
+    global selected_image
+    print('='*20)
+    print('#'*3 + ' Select Image ' + '#'*3)
+    print('='*20)
     # create list of images in image directory
     images = generate_image_list(image_dir)
 
@@ -183,13 +197,8 @@ def generate_grayscale_ascii():
 
         # get user selection
         user_selection = int(input('Enter image number:'))
-
-        # generate ascii art of user selected image
-        print("Generating ascii art from {}.....".format(images[user_selection]))
-        create_grayscale_ascii(images[user_selection])
-        if(image_dimensions):
-            #print results to terminal
-            print_results(images[user_selection])
+        selected_image = images[user_selection]
+        print('Current Selected Image : ' + selected_image)
         main_menu()
 
 # resize menu
@@ -222,13 +231,12 @@ def art_menu():
     print('1 : Monochrome')
     print('2 : Grayscale')
     print('9 : Back')
-    print('0 : Exit')
     print('='*20)
     choice = input('Enter Selection: ')
     if choice == '1':
-        generate_ascii()
+        generate_ascii('Monochrome')
     elif choice == '2':
-        generate_grayscale_ascii()
+        generate_ascii('Grayscale')
     elif choice == '9':
         main_menu()
     elif choice == '0':
@@ -303,8 +311,13 @@ def char_menu():
     else:
         main_menu()
 
-#generate main menu
+
+# ###########
+#  Main Menu
+# ###########
+
 def main_menu():
+    print('='*23)
     print('#'*23)
     print('#' + ' '*21 + '#')
     print('#' + ' ' + 'Ascii Art Generator' + ' ' + '#')
@@ -312,34 +325,30 @@ def main_menu():
     print('#'*23)
     print('='*23)
 
-    print('1 : Generate Ascii Art From Image')
-    print('2 : Set Output Dimensions')
-    print('3 : Change Character Lists')
-    print('4 : View Generated Text Files')
+    print('1 : Select Image')
+    print('2 : Generate Ascii Art')
+    print('3 : Set Output Dimensions')
+    print('4 : Change Character Lists')
+    print('5 : View Generated Text Files')
     print('0 : Exit')
     print('='*23)
+
     choice = input('Enter Selection: ')
     if choice == '1':
-        art_menu()
+        select_image_menu()
     elif choice == '2':
-        resize_menu()
+        art_menu()
     elif choice == '3':
-        char_menu()
+        resize_menu()
     elif choice == '4':
+        char_menu()
+    elif choice == '5':
         view_menu()
     elif choice == '0':
         exit()
     else:
         print('Please enter selection from menu options')
         main_menu()
-
-#print ascii art to terminal
-def print_results(filename):
-    filename = strip_extension(filename)
-    text_file = open(output_dir + filename + '.txt', 'r')
-    output = text_file.read()
-    print(output)
-    text_file.close()
 
 #exit program
 def exit():

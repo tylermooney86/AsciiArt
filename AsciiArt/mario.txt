@@ -1,40 +1,10 @@
-                                                                               
-                       .''''''''''''''''''''''':.                              
-                       .ttttttttttttttttttttttto                               
-                   .....ttttttttttttttttttttttt/ .............                 
-                   /nnnnttttttttttttttttttttttttnnnnnnnnnnnnno.                
-                   otttttttttttttttttttttttttttttttttttttttttt.                
-                   oytyyyyyyyyyyyn/////////yyyyn////;,;;;;;;;,.                
-                   nhyhyyyyyyyyyh/:''''''',yyyhn:'''.                          
-              .':':ottttyyyyytttt/'''''''',yyyhn'''':.........                 
-              ;hyyh;''''yyyhn''''''''''''',yyyhn''''''''''''''.                
-              ;hyyy;''',yyyhn''''''''''''',yyyhn''''''''''''''.                
-              ;hyyy;''',yyyyytttt/''''''''';;;,/tttt/''''''''''''':.           
-              ;hyyh;:'''yhhhhhhhho'''''''''''':;hyyh/:''''''''''',:            
-              ;hyyyo////ooooooooo;'''''''',////nyyyyn/////////::::..           
-              ;hyyyhhhhy'''''''''''''''''',hhhhhyyyyhhhhhhhhhy                 
-              ,ttttttttn,''''''''''''''''',ttttttttttttttttttn.                
-                       .'''''''''''''''''''''''''''''''''.                     
-                        '''''''''''''''''''''''''''''''''.                     
-              ,tnnnnnnnnntntnnnnnntttttttttttnt/...........                    
-              ;hyhhhhhhhyyyyyttttyhyyyyyyyyhhyho                               
-         :;;;;oyyyyyyyyyyyyyyttttyyyyyyyyyyyyyyn;;;;;;;;;;;;;;;;;;'            
-         'hhhhyyyyyyyyyyyyyyyttttyyyyyyyyyyttttyhhhhhhhhhhhhhhhhhho            
-    .::::,yyyyyyyyyyyyyyyyyyyttttyyyyyyyyyytttttyyyyyyyyyyyyyyyyyyo::::.       
-    .tyyyyyyyyyyyyyyyyyyyyyyytttttttttttttttttttyyyyyyyyyyyyyyyyyyyyyyh,       
-    .yhyhyyyyyyyyyyyyyyyyyyyyttttttttttttttttttyyyyyyyyyyyyyyyyyyyyyyyh,       
-    .,,,,,;;;;;;;;;tyyyytttyn;;;;ottttttttt;;;;/ytttyyyyy/;;;;;;;;;;;;;:       
-     .::::'''''''''nhhhytttto:'':/ttttttttn':':;ttttyhhhh,'''''''''''''.       
-     :::::'''''''''/noonttttn;//;ottttttttt///;ottttnooon,'''''''''''''.       
-     :::::''''''''''''''tttttttttttttttttttttttttttt;:'''''''''''''''''.       
-     :::::''''''''',,,,,tttttttttttttttttttttttttttt/,,,,''''''''''''''.       
-     :::::'''''''''ottttttttttttttttttttttttttttttttttttt,'''''''''''''.       
-     :::::'''''''''nttttttttttttttttttttttttttttttttttttt,'''''''''''''.       
-    ...........:::.ottttttttttttt/'''''''',tttttttttttttt'.::............      
-                   ottttttttttttt;        .yttttttttttttt:                     
-              :;,,,nytyyyytyt///o'        .////oytyyyyyty;,,,,.                
-              ;hhhhyyyyyyyyhn                  ,hyyyyyyyyhhhhy                 
-         .....;hyyyyyyyyyyyhn                  ,hyyyyyyyyyyyyt:....            
-         'yyyyyyyyyyyyyyyyyhn                  ,hyyyyyyyyyyyyyyyyy/      :.::::
-........ 'ytttntttttttottyoto..........        ,hyhhhhhhhhhhhhhhyho      ::::::
-.........:'''','''''',,,',,,'..........        :;,,,,,,,,,,,,,,,,;'       ::.::
+       0 0 0       
+     0000 00 0     
+    0 0 0  0   0   
+    00 0   0000    
+    0 0 00 0       
+  000000 0000000   
+  0  0 000 0 0  00 
+     000 0000 0    
+    00 0    00     
+  00 00     0000   
