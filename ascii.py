@@ -3,12 +3,16 @@
 
 from PIL import Image
 from os import listdir
+import sys
+
+# set default image dimensions
+image_dimensions = (80,40)
 
 # load image using name
-def load_image(img_name,x,y):
+def load_image(img_name):
     img_dir = 'Images/'
     image = Image.open(img_dir + img_name)
-    image = image.resize((x,y),Image.BILINEAR)
+    image = image.resize(image_dimensions, Image.BILINEAR)
     return image
 
 #strip extension from image name
@@ -26,9 +30,9 @@ def read_pixels(img, x, y):
     return pixel[x,y]
 
 #generate ascii image
-def create_ascii(img_name,x,y):
+def create_ascii(img_name):
     #load image get image size
-    img = monochrome(load_image(img_name,x,y))
+    img = monochrome(load_image(img_name))
     width, height = img.size
 
     # starting coordinates on image
@@ -63,7 +67,7 @@ def generate_image_list():
     return dir_list
 
 # generate menu and get user input
-def generate_menu():
+def generate_ascii():
     # create list of images in image directory
     images = generate_image_list()
 
@@ -72,20 +76,60 @@ def generate_menu():
         print('Please add images to Images directory before running program.')
     else:
         # print list of images for user selection
-        print('#'*5 + 'Images' + '#'*5)
+        print('#'*6 + ' Images ' + '#'*6)
+        print('='*20)
         for key, value in images.items():
             print('{} : {}'.format(key,value))
 
         # get user selection
         user_selection = int(input('Enter image number:'))
-        img_dimensions = input('Enter desired output dimensions separated by a comma, ex: x,y: ')
-        img_dimensions = img_dimensions.split(',')
 
         # generate ascii art of user selected image
         print("Generating ascii art from {}.....".format(images[user_selection]))
-        create_ascii(images[user_selection],int(img_dimensions[0]),int(img_dimensions[1]))
+        create_ascii(images[user_selection])
         #print results to terminal
         print_results(images[user_selection])
+        main_menu()
+
+# resize menu
+def resize_menu():
+    print('#'*6 + ' Resize ' + '#'*6)
+    print('='*20)
+    print('Current output image dimensions: ({},{})'.format(image_dimensions[0],image_dimensions[1]))
+    dimensions = input('Input new dimensions separated by a comma, ex: x,y : ')
+    dimensions = dimensions.split(',')
+    set_image_dimensions(int(dimensions[0]), int(dimensions[1]))
+    print('New output image dimensions: ({},{})'.format(image_dimensions[0],image_dimensions[1]))
+    main_menu()
+
+
+# set image Dimensions
+def set_image_dimensions(x,y):
+    global image_dimensions
+    image_dimensions = (x,y)
+
+#generate main menu
+def main_menu():
+    print('#'*23)
+    print('#' + ' '*21 + '#')
+    print('#' + ' ' + 'Ascii Art Generator' + ' ' + '#')
+    print('#' + ' '*21 + '#')
+    print('#'*23)
+    print('='*23)
+
+    print('1 : Generate Ascii Art From Image')
+    print('2 : Set Output Dimensions')
+    print('0 : Exit')
+    choice = input('Enter Selection: ')
+    if choice == '1':
+        generate_ascii()
+    if choice == '2':
+        resize_menu()
+    elif choice == '0':
+        exit()
+    else:
+        print('Please enter selection from menu options')
+        main_menu()
 
 #print ascii art to terminal
 def print_results(filename):
@@ -95,7 +139,11 @@ def print_results(filename):
     print(output)
     text_file.close()
 
+#exit program
+def exit():
+    sys.exit()
+
 
 ##### Main #####
-
-generate_menu()
+if __name__ == '__main__':
+    main_menu()
