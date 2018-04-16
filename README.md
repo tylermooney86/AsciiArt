@@ -54,7 +54,7 @@ Menus
         - Takes float values:
             - 1.0 = no brightness/contrast Change
             - 0.0 = black image
-            - > 1.0 = high contrast/Brightness
+            - 1.0+ = high contrast/Brightness
             - not a number = None
 ### View Generated Images:
    - Prints selected text file to console
