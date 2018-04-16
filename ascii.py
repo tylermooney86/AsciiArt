@@ -54,23 +54,21 @@ output_dir = 'AsciiArt/'
 selected_image = None
 contrast = None
 brightness = None
+# Default character lists
+mono_chars = '$ '
+grayscale_chars = 'py. '
 
 '''
 # ############
 #  Functions
 # ############
 '''
-
 # check density of char for sorting
 def char_density(c, font=font):
     image = Image.new('1', font.getsize(c), color=255)
     draw = ImageDraw.Draw(image)
     draw.text((0, 0), c, font=font)
     return collections.Counter(image.getdata())[0] #0 is black
-
-# Default character lists
-mono_chars = '$ '
-grayscale_chars = list(sorted(string.ascii_letters + string.digits + string.punctuation + ' ', key=char_density, reverse=True))
 
 # load image using name
 def load_image(img_name):
@@ -161,79 +159,62 @@ def exit():
 #     ascii
 # #############
 '''
-#generate ascii image
-def create_ascii(img_name):
-    #load image get image size
-    img = monochrome(load_image(img_name))
-    width, height = img.size
-
-    # starting coordinates on image
-    x = 0
-    y = 0
-
-    #assign ascii chars to monochrome values
-    chars = {0: mono_chars[0], 255: mono_chars[1]}
-
-    # open file to write ascii art to
-    text_file = open(output_dir + strip_extension(img_name) + '.txt', 'w')
-
-    # convert each pixel to ascii char and write to file
-    while y <= height - 1:
-        rgb = read_pixels(img,x,y)
-        text_file.write(chars[rgb])
-        x += 1
-        if(x == width -1):
-            text_file.write('\n')
-            y += 1
-            x = 0
-
-    #close text file
-    text_file.close()
-
-# write grayscale ascii art to file
-def create_grayscale_ascii(img_name):
-    #load image get image size
-    img = grayscale(load_image(img_name))
-    width, height = img.size
-
-    # starting coordinates on image
-    x = 0
-    y = 0
-
-    #assign ascii chars weighted by char_density
-    chars = grayscale_chars
-
-    # open file to write ascii art to
-    text_file = open(output_dir + strip_extension(img_name) + '.txt', 'w')
-
-    # convert each pixel to ascii char and write to file
-    while y <= height - 1:
-        rgb = read_pixels(img,x,y)
-        text_file.write(chars[int(rgb /255. * (len(chars) - 1) + 0.5) ])
-        x += 1
-        if(x == width -1):
-            text_file.write('\n')
-            y += 1
-            x = 0
-
-    #close text file
-    text_file.close()
-
-# generate menu and get user input
+# write ascii art to file
 def generate_ascii(image_filter='Grayscale'):
+    #Check if image has been selected yet
     if selected_image == None:
         select_image_menu()
     else:
-        # generate ascii art of user selected image
-        print("Generating ascii art from {}.....".format(selected_image))
-        if(image_filter == 'Monochrome'):
-            create_ascii(selected_image)
-        else:
-            create_grayscale_ascii(selected_image)
+        # starting coordinates on image
+        x = 0
+        y = 0
+        if image_filter == 'Monochrome':
+            #load image get image size
+            img = monochrome(load_image(selected_image))
+            #assign ascii chars to monochrome values
+            chars = {0: mono_chars[0], 255: mono_chars[1]}
+        else: # Grayscale
+            #load image get image size
+            img = grayscale(load_image(selected_image))
+            #assign ascii chars weighted by char_density
+            chars = grayscale_chars
+
+        # open file to write ascii art to
+        text_file = open(output_dir + strip_extension(selected_image) + '.txt', 'w')
+        width, height = img.size
+
+        if image_filter == 'Monochrome':
+            # convert each pixel to ascii char and write to file
+            while y <= height - 1:
+                rgb = read_pixels(img,x,y)
+                text_file.write(chars[rgb])
+                x += 1
+                if(x == width -1):
+                    text_file.write('\n')
+                    y += 1
+                    x = 0
+        else: # Grayscale
+            # convert each pixel to ascii char and write to file
+            while y <= height - 1:
+                rgb = read_pixels(img,x,y)
+                text_file.write(chars[int(rgb /255. * (len(chars) - 1) + 0.5) ])
+                x += 1
+                if(x == width -1):
+                    text_file.write('\n')
+                    y += 1
+                    x = 0
+
+        #close text file
+        text_file.close()
+
+        # print results to terminal if image has been resized
         if(image_dimensions):
             #print results to terminal
             print_results(selected_image)
-        main_menu()
+        else:
+            print('='*32)
+            print('Ascii image rendered to ' + output_dir + strip_extension(selected_image) + '.txt')
+            print('='*32)
 
 '''
 # ##############
@@ -266,7 +247,6 @@ def select_image_menu():
         else:
             selected_image = images[user_selection]
             print('Current Selected Image: ' + selected_image)
-        main_menu()
 
 # resize menu
 def resize_menu():
@@ -286,8 +266,6 @@ def resize_menu():
     else:
         print('Image will not be resized')
         set_image_dimensions(None)
-
-    main_menu()
 
 # art style menu
 def art_menu():
@@ -333,7 +311,6 @@ def view_menu():
         user_selection = int(input('Enter image number:'))
         print('** ' + images[user_selection] + ' **')
         print_results(images[user_selection])
-        main_menu()
 
 # Character list menu
 def char_menu():
@@ -359,7 +336,6 @@ def char_menu():
             update_char_list(new_list,'Monochrome')
             print('Updated list:')
             print(''.join(mono_chars))
-            main_menu()
         else:
             print('Invalid Entry')
             print('Monochrome list takes two characters')
@@ -376,7 +352,6 @@ def char_menu():
             update_char_list(new_list,'Grayscale')
             print('Updated list:')
             print(''.join(grayscale_chars))
-            main_menu()
         else:
             print('Invalid Entry')
             print('Grayscale list takes at least two characters')
@@ -393,51 +368,48 @@ def char_menu():
             invert_character_list('Monochrome')
             print('Updated list:')
             print(''.join(mono_chars))
-            main_menu()
         elif invert_choice == '2':
             invert_character_list()
             print('Updated list:')
             print(''.join(grayscale_chars))
-            main_menu()
         elif invert_choice == '9':
             settings_menu()
         else:
             print('Invalid Selection')
             char_menu()
-    # Back
-    else:
-        main_menu()
+    elif choice == '9':
+        settings_menu()
 
 # brightness Menu
 def brightness_menu():
     print('='*32)
     print('#' + ' '*9 + ' Brightness ' + ' '*9 + '#')
     print('='*32)
-
     print('Current Brightness: {}'.format(brightness))
-    choice = input('Enter Value: ')
-    if choice.isdigit():
-        set_brightness(float(choice))
+
+    #Get user input
+    try:
+        choice = float(input('Enter Value: '))
+        set_brightness(choice)
         print('New Brightness: {}'.format(brightness))
-    else:
+    except ValueError:
         print('Invalid Entry')
         set_brightness(None)
-    main_menu()
 
 def contrast_menu():
     print('='*32)
     print('#' + ' '*10 + ' Contrast ' + ' '*10 + '#')
     print('='*32)
-
     print('Current Contrast: {}'.format(contrast))
-    choice = input('Enter Value: ')
-    if choice.isdigit():
-        set_contrast(float(choice))
+    
+    #Get user input
+    try:
+        choice = float(input('Enter Value: '))
+        set_contrast(choice)
         print('New Contrast: {}'.format(contrast))
-    else:
+    except ValueError:
         print('Invalid Entry')
         set_contrast(None)
-    main_menu()
 
 # settings menu
 def settings_menu():
@@ -467,7 +439,6 @@ def settings_menu():
         exit()
     else:
         print('Please enter selection from menu options')
-        main_menu()
 '''
 # ###########
 #  Main Menu
@@ -502,8 +473,8 @@ def main_menu():
         exit()
     else:
         print('Please enter selection from menu options')
-        main_menu()
 
 ##### Main #####
 if __name__ == '__main__':
-    main_menu()
+    while(True):
+        main_menu()
